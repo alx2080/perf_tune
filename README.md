@@ -1,5 +1,7 @@
 # Performance Tune
 
+*Home Assistant integration that keeps the UI and the core responsive with thousands of fast-changing entities. UI in English, Ukrainian and Russian; documentation in Russian.*
+
 Кастомная интеграция Home Assistant для систем с тысячами быстро меняющихся
 сущностей (SCADA, Modbus/MQTT/S7 на тысячи точек). Убирает две причины тормозов:
 
