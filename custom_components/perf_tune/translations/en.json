@@ -1,0 +1,74 @@
+{
+  "config": {
+    "abort": {
+      "already_configured": "Performance Tune is already set up.",
+      "single_instance_allowed": "Performance Tune is already set up."
+    },
+    "step": {
+      "user": {
+        "title": "Performance Tune",
+        "description": "Fixes for systems with thousands of fast-changing entities. Each fix checks the Home Assistant internals it needs before it is switched on; if an update changed them, it stays off and a repair issue says so. Everything can be changed later in the options.",
+        "data": {
+          "ws_batch": "Batch state updates sent to browsers",
+          "ws_batch_interval": "Batch interval",
+          "gc_freeze": "Freeze long-lived objects (gc.freeze)",
+          "gc_freeze_delay": "Freeze this long after start",
+          "break_cycles": "Break the Event–Context cycle of state changes",
+          "break_cycles_prefixes": "For entity ids starting with (one per line)",
+          "patch_paho": "Fix paho-mqtt topic matching",
+          "gc_warn_ms": "Log garbage collections longer than"
+        },
+        "data_description": {
+          "ws_batch": "Browsers receive changes in one message per interval instead of one message per change. Without it, hundreds of changes per second make the UI lag and disconnect (\"Client unable to keep up\").",
+          "gc_freeze": "Objects that exist after start (states, registries, integrations) are no longer scanned by every full garbage collection.",
+          "break_cycles": "Every state change creates a reference cycle that only the full (blocking) garbage collection frees. It is only used by the live logbook for \"triggered by\"; sensors with a unit of measurement have no logbook entries.",
+          "patch_paho": "paho-mqtt creates a self-referencing closure for every incoming message. The replacement is checked to give identical results before it is switched on."
+        }
+      }
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Performance Tune",
+        "data": {
+          "ws_batch": "Batch state updates sent to browsers",
+          "ws_batch_interval": "Batch interval",
+          "gc_freeze": "Freeze long-lived objects (gc.freeze)",
+          "gc_freeze_delay": "Freeze this long after start",
+          "break_cycles": "Break the Event–Context cycle of state changes",
+          "break_cycles_prefixes": "For entity ids starting with (one per line)",
+          "patch_paho": "Fix paho-mqtt topic matching",
+          "gc_warn_ms": "Log garbage collections longer than"
+        }
+      }
+    }
+  },
+  "issues": {
+    "incompatible": {
+      "title": "Performance Tune: \"{patch}\" is not active",
+      "description": "The \"{patch}\" fix does not fit Home Assistant {version}: {reason}. Home Assistant works as usual, just without this fix. Update Performance Tune or switch this fix off in the options."
+    }
+  },
+  "entity": {
+    "sensor": {
+      "gc_share": {"name": "Garbage collection time share"},
+      "gc_max_pause": {"name": "Garbage collection max pause"},
+      "gc_full_collections": {"name": "Full garbage collections per minute"},
+      "loop_delay_max": {"name": "Event loop max delay"},
+      "frozen_objects": {"name": "Frozen objects"},
+      "active_fixes": {"name": "Active fixes"}
+    }
+  },
+  "services": {
+    "garbage_report": {
+      "name": "Cyclic garbage report",
+      "description": "Which object types end up as cyclic garbage during the given time (to find the source of pauses).",
+      "fields": {"seconds": {"name": "Seconds", "description": "How long to collect."}}
+    },
+    "freeze": {
+      "name": "Freeze objects now",
+      "description": "Run gc.collect() + gc.freeze() right away."
+    }
+  }
+}

@@ -1,0 +1,14 @@
+{
+  "domain": "perf_tune",
+  "name": "Performance Tune",
+  "codeowners": ["@alx2080"],
+  "config_flow": true,
+  "dependencies": ["websocket_api"],
+  "documentation": "https://github.com/alx2080/perf_tune",
+  "integration_type": "service",
+  "iot_class": "calculated",
+  "issue_tracker": "https://github.com/alx2080/perf_tune/issues",
+  "requirements": [],
+  "single_config_entry": true,
+  "version": "0.1.0"
+}

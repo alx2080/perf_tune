@@ -1,0 +1,10 @@
+garbage_report:
+  fields:
+    seconds:
+      default: 2
+      selector:
+        number:
+          min: 1
+          max: 30
+          unit_of_measurement: s
+freeze:
