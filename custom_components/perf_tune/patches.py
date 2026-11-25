@@ -18,6 +18,7 @@ from typing import Any
 from homeassistant.auth.permissions.const import POLICY_READ
 from homeassistant.const import EVENT_STATE_CHANGED
 from homeassistant.core import HomeAssistant, callback
+from homeassistant.exceptions import HomeAssistantError
 
 from .const import WINDOW_SECONDS
 
@@ -199,7 +200,7 @@ class CycleBreakerPatch:
 
     Home Assistant sets ``context.origin_event = event`` while ``event.context``
     is that context, so every state change leaves a reference cycle that only
-    the expensive full garbage collection frees. ``origin_event`` is only read
+    the expensive full garbage collection frees. ``origin_event`` is read
     by the live logbook for "triggered by" information; sensors with a unit of
     measurement are not in the logbook anyway.
     """
@@ -394,6 +395,8 @@ async def async_garbage_report(seconds: float) -> dict[str, Any]:
     import asyncio  # noqa: PLC0415
     from collections import Counter  # noqa: PLC0415
 
+    if gc.get_debug():
+        raise HomeAssistantError("A garbage report is already running")
     gc.collect()
     gc.garbage.clear()
     gc.set_debug(gc.DEBUG_SAVEALL)

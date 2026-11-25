@@ -21,7 +21,7 @@
         "data_description": {
           "ws_batch": "Browsers receive changes in one message per interval instead of one message per change. Without it, hundreds of changes per second make the UI lag and disconnect (\"Client unable to keep up\").",
           "gc_freeze": "Objects that exist after start (states, registries, integrations) are no longer scanned by every full garbage collection.",
-          "break_cycles": "Every state change creates a reference cycle that only the full (blocking) garbage collection frees. It is only used by the live logbook for \"triggered by\"; sensors with a unit of measurement have no logbook entries.",
+          "break_cycles": "Every state change creates a reference cycle that only the full (blocking) garbage collection frees. It is used by the live logbook for \"triggered by\"; sensors with a unit of measurement have no logbook entries.",
           "patch_paho": "paho-mqtt creates a self-referencing closure for every incoming message. The replacement is checked to give identical results before it is switched on."
         }
       }

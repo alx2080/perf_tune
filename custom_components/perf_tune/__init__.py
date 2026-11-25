@@ -32,7 +32,13 @@ from homeassistant.core import (
 )
 from homeassistant.helpers import issue_registry as ir
 from homeassistant.helpers.event import async_call_later
+from homeassistant.helpers.service import async_register_admin_service
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
+
+try:  # Home Assistant 2026.x moved from voluptuous to probatio
+    import probatio as vol
+except ImportError:  # pragma: no cover
+    import voluptuous as vol
 
 from .const import (
     CONF_BREAK_CYCLES,
@@ -49,6 +55,7 @@ from .const import (
     PATCH_GC_FREEZE,
     PATCH_PAHO,
     PATCH_WS_BATCH,
+    MAX_REPORT_SECONDS,
     PATCHES,
     SENSOR_INTERVAL,
     STATUS_ACTIVE,
@@ -205,7 +212,7 @@ def _register_services(hass: HomeAssistant) -> None:
         return entries[0].runtime_data if entries else None
 
     async def _garbage_report(call: ServiceCall) -> dict[str, Any]:
-        return await async_garbage_report(float(call.data.get("seconds", 2)))
+        return await async_garbage_report(call.data["seconds"])
 
     async def _freeze(call: ServiceCall) -> dict[str, Any]:
         result = GcMonitor.freeze()
@@ -213,7 +220,13 @@ def _register_services(hass: HomeAssistant) -> None:
             _set_status(hass, rt, PATCH_GC_FREEZE, STATUS_ACTIVE)
         return result
 
-    hass.services.async_register(DOMAIN, "garbage_report", _garbage_report,
-                                 supports_response=SupportsResponse.ONLY)
-    hass.services.async_register(DOMAIN, "freeze", _freeze,
-                                 supports_response=SupportsResponse.OPTIONAL)
+    # Administrators only: both block Home Assistant for a moment, and the
+    # report keeps all cyclic garbage in memory while it runs.
+    async_register_admin_service(
+        hass, DOMAIN, "garbage_report", _garbage_report,
+        schema=vol.Schema({vol.Optional("seconds", default=2): vol.All(
+            vol.Coerce(float), vol.Range(min=1, max=MAX_REPORT_SECONDS))}),
+        supports_response=SupportsResponse.ONLY)
+    async_register_admin_service(
+        hass, DOMAIN, "freeze", _freeze, schema=vol.Schema({}),
+        supports_response=SupportsResponse.OPTIONAL)
